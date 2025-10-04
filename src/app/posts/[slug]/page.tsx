@@ -9,6 +9,7 @@ import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
 import { MDXImage } from "@/components/mdx-image";
 import { CodeBlock } from "@/components/code-block";
+import { ScrambleText } from "@/components/scramble-text";
 
 type PostPageProps = {
   params: Promise<{
@@ -57,9 +58,12 @@ export default async function PostPage({ params }: PostPageProps) {
       <header className="mb-8">
         <h1 className="text-4xl font-bold mb-4">{post.frontmatter.title}</h1>
         <div className="text-sm text-[#b2b2b2]">
-          <span>{post.frontmatter.date}</span>
+          <ScrambleText text={post.frontmatter.date} />
           {post.frontmatter.author && (
-            <span className="ml-2">{post.frontmatter.author}</span>
+            <>
+              <span className="ml-2">•</span>
+              <ScrambleText text={post.frontmatter.author} className="ml-2" />
+            </>
           )}
         </div>
         {post.frontmatter.tags && post.frontmatter.tags.length > 0 && (

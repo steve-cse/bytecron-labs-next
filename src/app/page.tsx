@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import Link from "next/link";
+import { ScrambleText } from "@/components/scramble-text";
 
 type Post = {
   slug: string;
@@ -53,7 +54,7 @@ export default async function Home() {
           <article key={post.slug} className="pb-6 ">
             <Link href={`/posts/${post.slug}`} className="group">
               <h2 className="text-2xl font-semibold mb-2 group-hover:text-[#db0042] transition-colors">
-                {post.title}
+                <ScrambleText text={post.title} />
               </h2>
             </Link>
 
