@@ -11,7 +11,12 @@ import {
 import { getRandomSubtext } from "@/lib/utils";
 
 export function Navbar() {
-  const randomSubtext = getRandomSubtext();
+  const [randomSubtext, setRandomSubtext] = useState("");
+
+  useEffect(() => {
+    setRandomSubtext(getRandomSubtext());
+  }, []);
+
   return (
     <nav className="py-4">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">

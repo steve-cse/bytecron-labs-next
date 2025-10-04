@@ -39,7 +39,7 @@ export function ScrambleText({ text, className }: ScrambleTextProps) {
             }
             return characters[Math.floor(Math.random() * characters.length)];
           })
-          .join("")
+          .join(""),
       );
 
       if (iteration >= text.length) {
