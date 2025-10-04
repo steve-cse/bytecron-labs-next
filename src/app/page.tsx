@@ -52,7 +52,7 @@ export default async function Home() {
       <div className="space-y-6">
         {posts.map((post) => (
           <article key={post.slug} className="pb-6 ">
-            <Link href={`/posts/${post.slug}`} className="group">
+            <Link href={`/post/${post.slug}`} className="group">
               <h2 className="text-2xl font-semibold mb-2 group-hover:text-[#db0042] transition-colors">
                 <ScrambleText text={post.title} />
               </h2>
