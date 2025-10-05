@@ -1,0 +1,94 @@
+---
+title: Euclidean Algorithm
+date: March 15 2025
+excerpt: A fundamental method for computing the greatest common divisor (GCD) of two integers. Starting from the principle of repeated subtraction and moving toward an optimized version using the modulus operator.
+tags: ["dsa", "algorithms", "gcd", "mathematics"]
+author: Steve Boby George
+published: true
+---
+
+![The School of Athens](https://upload.wikimedia.org/wikipedia/commons/5/57/0_Chambre_de_Rapha%C3%ABl_-_%C3%89cole_d%27Ath%C3%A8nes_-_Mus%C3%A9es_du_Vatican.JPG)
+<div className="text-center italic">
+  “The School of Athens” by Raphael, via <a href="https://commons.wikimedia.org/wiki/File:0_Chambre_de_Rapha%C3%ABl_-_%C3%89cole_d%27Ath%C3%A8nes_-_Mus%C3%A9es_du_Vatican.JPG" target="_blank" rel="noopener noreferrer">Wikimedia Commons</a>
+</div>
+
+
+The algorithm states that the greatest common divisor (GCD) of two numbers can be derived using the following identity:
+
+$$
+\gcd(n_1, n_2) = \gcd(n_1 - n_2, n_2)
+$$
+
+where $n_1 > n_2$
+
+The difference is always divisible by the GCD, i.e.,
+
+$$
+(n_1 - n_2) \bmod \gcd(n_1, n_2) = 0
+$$
+
+## Example: GCD for $n_1 = 7$ and $n_2 = 2$
+
+$$
+\gcd(7, 2) = \gcd(7 - 2, 2) = \gcd(5, 2)
+$$
+
+$$
+\gcd(5, 2) = \gcd(5 - 2, 2) = \gcd(3, 2)
+$$
+
+$$
+\gcd(3, 2) = \gcd(3 - 2, 2) = \gcd(1, 2)
+$$
+
+$$
+\gcd(2, 1) = \gcd(2 - 1, 1) = \gcd(1, 1)
+$$
+
+$$
+\gcd(1, 1) = \gcd(1 - 1, 1) = \gcd(0, 1)
+$$
+
+**Hence, the GCD of $n_1 = 7$ and $n_2 = 2$ is 1.**
+
+## Optimization with Modulus
+
+Instead of repeated subtraction, we can use the modulus operator:
+
+$$
+\gcd(7 \bmod 2, 2) = \gcd(1, 2)
+$$
+
+The code for the algorithm can be written as follows:
+
+```java
+class Solution {
+    public int GCD(int n1, int n2) {
+        while (n1 != 0 && n2 != 0) {
+            if (n1 > n2)
+                n1 = n1 % n2;
+            else
+                n2 = n2 % n1;
+        }
+        return (n2 == 0) ? n1 : n2;
+    }
+}
+```
+
+## Complexity Analysis
+
+**Time Complexity:**
+
+$$
+O(\log(\min(n_1, n_2)))
+$$
+
+where $n_1$ and $n_2$ are given numbers. Because in every iteration, the algorithm is dividing the larger number with the smaller number, resulting in logarithmic time complexity.
+
+**Space Complexity:**
+
+$$
+O(1)
+$$
+
+Since only a couple of variables are used, i.e., constant space.

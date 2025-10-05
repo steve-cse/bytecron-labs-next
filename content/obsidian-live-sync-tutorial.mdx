@@ -1,0 +1,91 @@
+---
+title: Obsidian Sync ft. Coolify
+date: September 23 2025
+excerpt: A practical guide to setting up Obsidian’s Self-hosted LiveSync plugin using Coolify. Starting with deploying CouchDB through Docker Compose, then configuring it securely for multi-device sync.
+tags: ["coolify","obsidian","self-hosting"]
+author: Steve Boby George
+published: true
+---
+
+I’ve been using obsidian for a while now, and it’s one of the best knowledge base tools I’ve come across. It has an amazing plugin community and supports a wide variety of themes. The only drawback is that the sync feature is locked behind a paywall. If you’re able to purchase the license, please skip this tutorial and support the developers. This guide explains how to set up the **Self-hosted LiveSync** plugin for obsidian using coolify an approach that’s far more efficient and seamless than maintaining a GitHub repository for your obsidian vault. 
+
+![obsidian-sync-meme](images/obsidian-sync-meme.jpeg)
+<div className="text-center italic">
+  Image by <a href="https://www.reddit.com/user/mohammed0_o/" target="_blank" rel="noopener noreferrer">u/mohammed0_o</a> via <a href="https://www.reddit.com/r/ObsidianMDMemes/" target="_blank" rel="noopener noreferrer">r/ObsidianMDMemes</a>
+</div>
+
+
+I’m writing this because I couldn’t find any clear or up-to-date documentation on setting up the plugin, and the official docs were a bit difficult to follow. The LiveSync plugin uses **CouchDB** for multi-device syncing, so we’ll host CouchDB on our server.
+## Docker Compose File
+Here’s the `docker-compose.yml` snippet for CouchDB:
+```yml
+services:
+  couchdb:
+    image: budibase/couchdb
+    environment:
+      - SERVICE_FQDN_COUCHDB
+      - COUCHDB_PASSWORD=$SERVICE_PASSWORD_COUCHDB
+      - COUCHDB_USER=$SERVICE_USER_COUCHDB
+      - TARGETBUILD=docker-compose
+    healthcheck:
+      test:
+        - CMD
+        - bash
+        - '-c'
+        - 'curl -f -u $${COUCHDB_USER}:$${COUCHDB_PASSWORD} http://localhost:5984/'
+      interval: 15s
+      timeout: 15s
+      retries: 3
+      start_period: 10s
+    container_name: couchdb
+    volumes:
+      - 'couchdb-data:/opt/couchdb/data'
+      - 'config:/opt/couchdb/etc/local.d'
+    restart: unless-stopped
+```
+Be sure to set the environment variables in the service before starting it, and map port **5984** (the default CouchDB port).Here's fun fact, I couldn’t get any other CouchDB image to work reliably except this one (`budibase/couchdb`). So if you run into issues with alternatives, just stick with it.
+## Configure CouchDB
+Once the service is up and running, configure CouchDB on your host machine with the following commands:
+```bash
+export hostname=https://billowing-dawn-6619.bytecron.dev (change me)
+export username=campanella (change me)
+export password=dfusiuada9suy (change me)
+export node= couchdb@127.0.0.1
+
+curl -X POST "${hostname}/_cluster_setup" -H "Content-Type: application/json" -d "{\"action\":\"enable_single_node\",\"username\":\"${username}\",\"password\":\"${password}\",\"bind_address\":\"0.0.0.0\",\"port\":5984,\"singlenode\":true}"  --user "${username}:${password}"
+
+
+curl -X PUT "${hostname}/_node/${node}/_config/chttpd/require_valid_user" -H "Content-Type: application/json" -d '"true"' --user "${username}:${password}"
+curl -X PUT "${hostname}/_node/${node}/_config/chttpd_auth/require_valid_user" -H "Content-Type: application/json" -d '"true"' --user "${username}:${password}"
+curl -X PUT "${hostname}/_node/${node}/_config/httpd/WWW-Authenticate" -H "Content-Type: application/json" -d '"Basic realm=\"couchdb\""' --user "${username}:${password}"
+curl -X PUT "${hostname}/_node/${node}/_config/httpd/enable_cors" -H "Content-Type: application/json" -d '"true"' --user "${username}:${password}"
+curl -X PUT "${hostname}/_node/${node}/_config/chttpd/enable_cors" -H "Content-Type: application/json" -d '"true"' --user "${username}:${password}"
+curl -X PUT "${hostname}/_node/${node}/_config/chttpd/max_http_request_size" -H "Content-Type: application/json" -d '"4294967296"' --user "${username}:${password}"
+curl -X PUT "${hostname}/_node/${node}/_config/couchdb/max_document_size" -H "Content-Type: application/json" -d '"50000000"' --user "${username}:${password}"
+curl -X PUT "${hostname}/_node/${node}/_config/cors/credentials" -H "Content-Type: application/json" -d '"true"' --user "${username}:${password}"
+curl -X PUT "${hostname}/_node/${node}/_config/cors/origins" -H "Content-Type: application/json" -d '"app://obsidian.md,capacitor://localhost,http://localhost"' --user "${username}:${password}"
+```
+## Generate the Setup URI
+Finally, to get the **setup URI** execute the following docker image (credits: [Leduccc](https://leduccc.medium.com/))
+```bash
+docker run \  
+-e hostname=https://example.com \  
+-e database=obsidiannotes \  
+-e username=johndoe \  
+-e password=abc123 \  
+-e passphrase=dfsapkdjaskdjasdas \  
+docker.io/oleduc/docker-obsidian-livesync-couchdb:master \  
+deno -A /scripts/generate_setupuri.ts
+```
+The mapping for the environment variables is as follows:  
+- SERVER_DOMAIN -> hostname  
+- COUCHDB_USER -> username (you have setup in coolify)
+- COUCHDB_PASSWORD -> password (you have setup in coolify)
+- COUCHDB_DATABASE -> database (you can name the database as your wish)
+- passphrase -> This one is new and can be set to an arbitrary value. Make sure to save it, as you will need it each time you want to add a new device.
+## Final Steps
+Go back to Obsidian, install the **LiveSync** plugin (if you haven’t already), enable it, and paste your **encrypted setup URI** along with the **passphrase** you set. Then follow the wizard to complete the configuration.
+## Helpful Links
+- [https://github.com/vrtmrz/obsidian-livesync/tree/main](https://github.com/vrtmrz/obsidian-livesync/tree/main)
+- [https://github.com/vrtmrz/obsidian-livesync/issues/570](https://github.com/vrtmrz/obsidian-livesync/issues/570)
+- [https://leduccc.medium.com/setup-self-hosted-synchronization-for-obsidian-cba121166d5e](https://leduccc.medium.com/setup-self-hosted-synchronization-for-obsidian-cba121166d5e)

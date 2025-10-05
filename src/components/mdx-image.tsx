@@ -3,21 +3,21 @@ import type { ImgHTMLAttributes } from "react";
 
 type MDXImageProps = ImgHTMLAttributes<HTMLImageElement>;
 
-export function MDXImage({ src, alt, className, ...props }: MDXImageProps) {
+export function MDXImage({ src, alt, className }: MDXImageProps) {
   if (!src || typeof src !== "string") return null;
 
   // Handle external URLs (http/https)
   if (src.startsWith("http://") || src.startsWith("https://")) {
     return (
-      <img
+      <Image
         src={src}
         alt={alt || ""}
-        {...props}
+        width={800}
+        height={400}
         className={className || "my-8 w-full h-auto"}
       />
     );
   }
-
   // Normalize the path to always start with /
   let imagePath = src;
 
