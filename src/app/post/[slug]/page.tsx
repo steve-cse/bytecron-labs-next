@@ -1,14 +1,14 @@
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
-import { MDXRemote } from "next-mdx-remote/rsc";
-import { notFound } from "next/navigation";
 import Link from "next/link";
-import rehypePrettyCode from "rehype-pretty-code";
+import { notFound } from "next/navigation";
+import { MDXRemote } from "next-mdx-remote/rsc";
 import rehypeKatex from "rehype-katex";
+import rehypePrettyCode from "rehype-pretty-code";
 import remarkMath from "remark-math";
-import { MDXImage } from "@/components/mdx-image";
 import { CodeBlock } from "@/components/code-block";
+import { MDXImage } from "@/components/mdx-image";
 import { ScrambleText } from "@/components/scramble-text";
 
 type PostPageProps = {

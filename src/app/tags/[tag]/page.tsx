@@ -1,9 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
 
 type TagPageProps = {
   params: Promise<{

@@ -1,14 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import {
-  motion,
-  useInView,
-  useMotionValue,
-  useTransform,
-  animate,
-} from "framer-motion";
-import { useRef } from "react";
+import { useInView } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
 interface ScrambleTextProps {
   text: string;
@@ -39,7 +32,7 @@ export function ScrambleText({ text, className }: ScrambleTextProps) {
             }
             return characters[Math.floor(Math.random() * characters.length)];
           })
-          .join(""),
+          .join("")
       );
 
       if (iteration >= text.length) {

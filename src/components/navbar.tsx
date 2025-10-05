@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
 import {
-  GitHubLogoIcon,
-  TwitterLogoIcon,
-  LinkedInLogoIcon,
   EnvelopeClosedIcon,
+  GitHubLogoIcon,
+  LinkedInLogoIcon,
+  TwitterLogoIcon,
 } from "@radix-ui/react-icons";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import { getRandomSubtext } from "@/lib/utils";
 
 export function Navbar() {
