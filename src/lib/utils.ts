@@ -12,6 +12,7 @@ const subtexts = [
   "Authentic tech insights.",
   "Experiments that work.",
   "Hack. Learn. Ship.",
+  "Haters gonna hate."
 ];
 
 export const getRandomSubtext = () => {

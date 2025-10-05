@@ -7,7 +7,7 @@ author: Steve Boby George
 published: true
 ---
 
-You might be wondering, why make a blog post on HTMX this year rather than last year when the hype was at its peak? Well, better late than never. I've been looking to rewrite the code for this blog from scratch since a long time and why not rewrite it in the most hyped/powerful HTML extension even though it's [dead](https://htmx.org/essays/future/). At first I was pretty skeptical whether I could code with minimal JavaScript because I've been using React, Next and Vue for every single project and it was getting boring. The added advantage of HTMX is maintaining a single code base. So I went with Java Spring Boot for the backend along with Thymeleaf for templating (should have gone for JTE but live and learn I guess).
+You might be wondering, why make a blog post on HTMX this year rather than last year when the hype was at its peak? Well, better late than never. I've been looking to rewrite the code for this blog from scratch for a long time and why not rewrite it in the most hyped/powerful HTML extension even though it's [dead](https://htmx.org/essays/future/). At first I was pretty skeptical whether I could code with minimal JavaScript because I've been using React, Next and Vue for every single project and it was getting boring. The added advantage of HTMX is maintaining a single code base. So I went with Java Spring Boot for the backend along with Thymeleaf for templating (should have gone for JTE but live and learn I guess).
 
 ## Getting Used to the HTMX Mental Model
 
@@ -17,7 +17,7 @@ You might be wondering, why make a blog post on HTMX this year rather than last 
 </div>
 
 
-At first it was quite weird to be honest to get around the mental model of HTMX but after working with it to render a few pages you get used to it pretty quickly, and the documentation for HTMX is excellent. So what's the mental model? Well instead of returning JSON to update the page you send the required HTML from the backend server, embracing it, and HTMX does its magic by swapping the response, a partial view with the old elements in the DOM.
+At first it was quite weird to be honest to get around the mental model of HTMX but after working with it to render a few pages you get used to it pretty quickly, and the documentation for HTMX is excellent. So what's the mental model? Well instead of returning JSON to update the page you send the required HTML from the backend server, embracing it. HTMX does its magic by swapping the response, a partial view with the old elements in the DOM.
 
 ```html
 <body>
@@ -29,7 +29,7 @@ The example above demonstrates the `hx-get` and `hx-trigger` attributes, which b
 
 ## Markdown Parsing and Frontend Libraries
 
-Well now with HTMX basics down, I need a parser to parse my markdown to HTML. I scoured the internet and stumbled upon [flex mark](https://github.com/vsch/flexmark-java) a java library which has a multitude of parsers, it even has a [GitLab](https://github.com/vsch/flexmark-java/tree/master/flexmark-ext-gitlab) parser; how cool is that!
+Well now with HTMX basics down, I need a parser to parse my markdown to HTML. I scoured the internet and stumbled upon [flex mark](https://github.com/vsch/flexmark-java) a java library which has a multitude of parsers, it even has a [GitLab](https://github.com/vsch/flexmark-java/tree/master/flexmark-ext-gitlab) parser. How cool is that!
 
 Next, for the frontend experience, I want a library that displays math on the frontend [KATEX](https://katex.org/) was my go to here and [highlight.js](https://highlightjs.org/) for code highlighting.
 
@@ -39,9 +39,9 @@ Now here's where I started making mistakes. I started using tailwind for my styl
 
 ## Navigation Struggles
 
-Well now my CSS is sorted and now we can head on over to navigation. Whenever a user clicks on a new post he/she has to be routed to a new page with the posts content. After reading the HTMX documentation I thought lets use `hx-push-url` attribute which allows me to push a URL into the browser location history but here's the problem; whenever the browsers forward and backward buttons are pressed it breaks the page and returns the partial view rather than the full one.
+Well now my CSS is sorted and now we can head on over to navigation. Whenever a user clicks on a post, they must be routed to a new page with the post's content. After reading the HTMX documentation I thought let's use `hx-push-url` attribute which allows me to push a URL into the browser location history but here's the problem, whenever the browsers forward and backward buttons are pressed it breaks the page and returns the partial view rather than the full one.
 
-Searching for a solution I landed on the official subreddit for HTMX where many comments wrote just check the response header on the backend and return the full or partial view based on it. This worked but on page reload only the partial post content was returned and the main layout of the page is not loaded as HTMX cache is cleared. `hx-push-url` is good for custom AJAX interactions that should update the URL; an example for this could be a filtered search. For my use case `hx-boost` is the attribute to go for since when the server returns the HTML, HTMX intercepts and extracts just the required portion of the page. So `hx-boost` basically turned my `<a>` tags into AJAX requests thereby preventing reload while navigating.
+Searching for a solution I landed on the official subreddit for HTMX where many comments suggested to just check the response header on the backend and return the full or partial view based on it. This worked but on page reload only the partial post content was returned; the main layout didn't load because HTMX's cache had been cleared. `hx-push-url` is good for custom AJAX interactions that should update the URL; an example for this could be a filtered search. For my use case `hx-boost` is the attribute to go for since when the server returns the HTML, HTMX intercepts and extracts just the required portion of the page. So `hx-boost` basically turned my `<a>` tags into AJAX requests thereby preventing reload while navigating.
 
 ## Mobile Responsiveness with Alpine.js
 
@@ -54,7 +54,7 @@ Now that navigation is up and running, it's time to make the site mobile respons
 </div>
 
 
-Now since this is a small scale site I kept the mobile responsiveness for last as I was still skeptical whether I would make this far. Since HTMX doesn't play a vital role in client side rendering I need another library for this. I chose [Alpine.js](https://alpinejs.dev/)
+Now since this is a small scale site I kept the mobile responsiveness for last as I was still skeptical whether I would make it this far. Since HTMX doesn't play a vital role in client side rendering, I need another library for this. I chose [Alpine.js](https://alpinejs.dev/)
 
 ```html
 <header x-data="{ open: false }">
@@ -100,7 +100,7 @@ Now since this is a small scale site I kept the mobile responsiveness for last a
 </header>
 ```
 
-With a little bit of tailwind media queries and alpine state variables we have a responsive navbar. Here we maintain an `open` state variable and display the menu whenever the user clicks on the hamburger icon.
+With a little bit of tailwind media queries and alpine state variables, we have a responsive navbar. Here we maintain an `open` state variable and display the menu whenever the user clicks on the hamburger icon.
 
 ## Backend Optimizations
 
@@ -150,4 +150,4 @@ public List<Post> getPosts() throws IOException {
 
 In the code above I have nothing unique to specify; in scenarios like this we can use a cron job for daily cache eviction at a certain interval.
 
-And that's it! this was my wholesome experience rewriting my site from Hugo to HTMX. As a conclusion I want to quote [Carson Gross](https://x.com/htmx_org), the unhinged creator of HTMX: "javascript fatigue: longing for a hypertext already in hand"
+And that's it! This was my wholesome experience rewriting my site from Hugo to HTMX. As a conclusion I want to quote [Carson Gross](https://x.com/htmx_org), the unhinged creator of HTMX: "javascript fatigue: longing for a hypertext already in hand"
