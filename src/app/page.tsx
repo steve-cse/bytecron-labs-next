@@ -40,7 +40,7 @@ async function getPosts() {
     .filter((post) => post.published);
 
   return posts.sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
 }
 
@@ -54,13 +54,16 @@ export default async function Home() {
           <article key={post.slug} className="pb-6 ">
             <Link href={`/post/${post.slug}`} className="group">
               <h2 className="text-2xl font-semibold mb-2 group-hover:text-[#db0042] transition-colors">
-                <ScrambleText text={post.title} />
+                {post.title}
               </h2>
             </Link>
 
             <div className="text-sm text-[#b2b2b2] mb-2">
-              <span>{post.date}</span>
-              {post.author && <span className="ml-2">{post.author}</span>}
+              <ScrambleText text={post.date} />
+
+              {post.author && (
+                <ScrambleText className="ml-2" text={post.author} />
+              )}
             </div>
 
             <p className="text-[#b2b2b2] mb-3">{post.excerpt}</p>
